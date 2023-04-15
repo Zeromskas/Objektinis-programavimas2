@@ -3,12 +3,10 @@
 void pildymasKonsoleje(vector<Studentas> &studentai)
 {
     char testi;
-    Studentas temp;
 
     do
     {
-        duomenuIvedimas(temp);
-        studentai.push_back(temp);
+        studentai.push_back(duomenuIvedimas());
 
         do
         {
@@ -18,10 +16,11 @@ void pildymasKonsoleje(vector<Studentas> &studentai)
     } while (testi == 't');
 }
 
-void duomenuIvedimas(Studentas &temp)
+Studentas duomenuIvedimas()
 {
+    string vardas, pavarde;
     cout << "Įveskite vardą ir pavardę: " << endl;
-    cin >> temp.vardas >> temp.pavarde;
+    cin >> vardas >> pavarde;
 
     cout << "Įveskite pažymius (jei daugiau pažymių nėra, įveskite bet kokią raidę):" << endl;
 
@@ -62,11 +61,13 @@ void duomenuIvedimas(Studentas &temp)
         cin >> pazymiai.egz;
     }
 
-    temp.vidurkis = vidurkioSkaiciavimas(pazymiai);
-    temp.mediana = medianosSkaiciavimas(pazymiai);
+    float vidurkis = vidurkioSkaiciavimas(pazymiai);
+    float mediana = medianosSkaiciavimas(pazymiai);
     pazymiai.nd.clear();
 
+    Studentas temp(vardas, pavarde, vidurkis, mediana);
     cout << "Duomenys įrašyti" << endl;
+    return temp;
 }
 
 void generuotiAtsitiktinius(vector<Studentas> &studentai)
@@ -109,21 +110,20 @@ void generuotiAtsitiktinius(vector<Studentas> &studentai)
 
     studentai.reserve(studentuKiekis);
 
-    Studentas temp;
     Pazymiai pazymiai;
     pazymiai.nd.reserve(pazymiuKiekis);
 
     for (int i = 0; i < studentuKiekis; ++i)
     {
-        temp.vardas = "vardas" + to_string(i);
-        temp.pavarde = "pavarde" + to_string(i);
+        string vardas = "vardas" + to_string(i);
+        string pavarde = "pavarde" + to_string(i);
         for (int j = 0; j < pazymiuKiekis; j++)
             pazymiai.nd.push_back(dist(mt));
         pazymiai.egz = dist(mt);
-        temp.vidurkis = vidurkioSkaiciavimas(pazymiai);
-        temp.mediana = medianosSkaiciavimas(pazymiai);
+        float vidurkis = vidurkioSkaiciavimas(pazymiai);
+        float mediana = medianosSkaiciavimas(pazymiai);
         pazymiai.nd.clear();
-        studentai.push_back(temp);
+        studentai.push_back(Studentas(vardas, pavarde, vidurkis, mediana));
     }
 }
 
@@ -218,42 +218,27 @@ void failoSkaitymas(vector<Studentas> &studentai, string const &filename)
     getline(in, line);
     int pazymiuKiekis = count(line.begin(), line.end(), 'N');
 
-    Studentas temp;
+    
     Pazymiai pazymiai;
     pazymiai.nd.reserve(pazymiuKiekis);
     int p;
+    string vardas, pavarde;
+    float vidurkis, mediana;
 
-    while (in >> temp.vardas)
+    while (in >> vardas)
     {
-        in >> temp.pavarde;
+        in >> pavarde;
         for (int i = 0; i < pazymiuKiekis; ++i)
         {
             in >> p;
             pazymiai.nd.push_back(p);
         }
         in >> pazymiai.egz;
-        temp.vidurkis = vidurkioSkaiciavimas(pazymiai);
-        temp.mediana = medianosSkaiciavimas(pazymiai);
+        vidurkis = vidurkioSkaiciavimas(pazymiai);
+        mediana = medianosSkaiciavimas(pazymiai);
         pazymiai.nd.clear();
-        studentai.push_back(temp);
+        studentai.push_back(Studentas(vardas, pavarde, vidurkis, mediana));
     }
-
-    // while (std::getline(in, line))
-    // {
-    //     std::stringstream ss(line);
-    //     ss >> temp.vardas >> temp.pavarde;
-    //     for (int i = 0; i < pazymiuKiekis; ++i)
-    //     {
-    //         ss>>p;
-    //         pazymiai.nd.push_back(p);
-    //     }
-    //     ss >> pazymiai.egz;
-    //     temp.vidurkis = vidurkioSkaiciavimas(pazymiai);
-    //     temp.mediana = medianosSkaiciavimas(pazymiai);
-    //     pazymiai.nd.clear();
-    //     studentai.push_back(temp);
-    // }
-
     in.close();
 }
 
@@ -281,7 +266,7 @@ void spausdinimas(vector<Studentas> &studentai, string const &filename)
 
     for (int i = 0; i < studentai.size(); ++i)
     {
-        (*oss) << setw(15) << left << studentai[i].vardas << setw(20) << left << studentai[i].pavarde << setw(18) << left << setprecision(3) << studentai[i].vidurkis << setw(18) << left << setprecision(3) << studentai[i].mediana << endl;
+        (*oss) << studentai[i].output().rdbuf();
         if ((i + 1) % 10 == 0 || i + 1 == studentai.size())
         {
             out << oss->str();
@@ -314,21 +299,21 @@ float medianosSkaiciavimas(Pazymiai &temp)
 
 bool compareName(const Studentas &a, const Studentas &b)
 {
-    if (a.pavarde == b.pavarde)
-        return a.vardas < b.vardas;
+    if (a.getPavarde() == b.getPavarde())
+        return a.getVardas() < b.getVardas();
     else
-        return a.pavarde < b.pavarde;
+        return a.getPavarde() < b.getPavarde();
 }
 
 bool compareGrade(const Studentas &a, const Studentas &b)
 {
-    return a.vidurkis < b.vidurkis;
+    return a.getVidurkis() < b.getVidurkis();
 }
 
 vector<Studentas> splittinimas(vector<Studentas> &studentai)
 {
     cout<<"Duomenys dalinami"<<endl;
-    auto it = std::find_if(studentai.begin(), studentai.end(), [](const auto &s) { return s.vidurkis >= 5; });
+    auto it = std::find_if(studentai.begin(), studentai.end(), [](const auto &s) { return s.getVidurkis() >= 5; });
     vector<Studentas> temp (it, studentai.end());
     studentai.resize(studentai.size()-temp.size());
     return temp;
@@ -337,7 +322,7 @@ vector<Studentas> splittinimas(vector<Studentas> &studentai)
 void splittinimas2(vector<Studentas> &studentai, vector<Studentas> &studPass, vector<Studentas> &studFail)
 {
     cout << "Duomenys dalinami" << endl;
-    auto it = std::find_if(studentai.begin(), studentai.end(), [](const auto &s) { return s.vidurkis >= 5; });
+    auto it = std::find_if(studentai.begin(), studentai.end(), [](const auto &s) { return s.getVidurkis() >= 5; });
     studPass.resize(std::distance(it, studentai.end()));
     copy(it, studentai.end(), studPass.begin());
     std::advance(it, -1);

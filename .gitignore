@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+prog
+studFail.txt
+studPass.txt
+studentai1M.txt
+test
+test2
+.DS_Store
+.gitignore
+.gitignore

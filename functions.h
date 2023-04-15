@@ -47,11 +47,50 @@ using std::chrono::milliseconds;
 using std::chrono::seconds;
 
 
-struct Studentas
+class Studentas
 {
+    private:
     string vardas, pavarde;
     float vidurkis = 0;
     float mediana = 0;
+    public:
+    Studentas(string vard, string pav, float vid, float med)
+    {
+        vardas = vard;
+        pavarde = pav;
+        vidurkis = vid;
+        mediana = med;
+    }
+    Studentas()
+    {
+        vardas = "";
+        pavarde = "";
+        vidurkis = 0;
+        mediana = 0;
+    }
+    string getVardas() const
+    {
+        return vardas;
+    }
+    string getPavarde() const
+    {
+        return pavarde;
+    }
+    float getVidurkis() const
+    {
+        return vidurkis;
+    }
+    float getMediana() const
+    {
+        return mediana;
+    }
+
+    ostringstream output()
+    {
+        ostringstream temp;
+        temp << setw(15) << left << vardas << setw(20) << left << pavarde << setw(18) << left << setprecision(3) << vidurkis << setw(18) << left << setprecision(3) << mediana << endl;
+        return temp;
+    }
 };
 
 struct Pazymiai
@@ -66,7 +105,7 @@ void generuotiAtsitiktinius(vector<Studentas> &studentai);
 void pildymasKonsoleje(vector<Studentas> &studentai);
 void spausdinimas(vector<Studentas> &studentai, string const &filename);
 void failoSkaitymas(vector<Studentas> &studentai, string const &filename);
-void duomenuIvedimas(Studentas &temp);
+Studentas duomenuIvedimas();
 bool compareName(const Studentas &a, const Studentas &b);
 bool compareGrade(const Studentas &a, const Studentas &b);
 vector<Studentas> splittinimas(vector<Studentas> &studentai);
