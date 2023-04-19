@@ -8,7 +8,7 @@ struct Time
 
 int main()
 {
-    vector<Studentas> studentai;
+    vector<Student> students;
     std::chrono::high_resolution_clock::time_point total_start, total_end;
     std::chrono::high_resolution_clock::time_point start_time, end_time;
     duration<double> dur;
@@ -30,27 +30,27 @@ int main()
 
         total_start = high_resolution_clock::now();
         start_time = high_resolution_clock::now();
-        failoSkaitymas(studentai, filename);
+        readFile(students, filename);
         end_time = high_resolution_clock::now();
         dur = end_time - start_time;
         times[0].duration[i]=dur.count();
         start_time = high_resolution_clock::now();
-        rikiavimas(studentai, "grade");
+        sort(students, "grade");
         end_time = high_resolution_clock::now();
         dur = end_time - start_time;
         times[1].duration[i] = dur.count();
         start_time = high_resolution_clock::now();
-        vector<Studentas> studPass = splittinimas(studentai);
+        vector<Student> studPass = split(students);
         end_time = high_resolution_clock::now();
         dur = end_time - start_time;
         times[2].duration[i] = dur.count();
-        rikiavimas(studentai, "name");
-        rikiavimas(studPass, "name");
+        sort(students, "name");
+        sort(studPass, "name");
         start_time = high_resolution_clock::now();
-        spausdinimas(studPass, "studPass.txt");
+        print(studPass, "studPass.txt");
         studPass.clear();
-        spausdinimas(studentai, "studFail.txt");
-        studentai.clear();
+        print(students, "studFail.txt");
+        students.clear();
         end_time= high_resolution_clock::now();
         dur = end_time - start_time;
         times[3].duration[i] = dur.count();

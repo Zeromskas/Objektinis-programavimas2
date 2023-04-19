@@ -48,70 +48,71 @@ using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 
-struct Pazymiai
+struct Grades
 {
-    vector<int> nd;
-    int egz = 0;
+    vector<int> homeworkGrades;
+    int examGrade = 0;
 };
 
-class Studentas
+class Student
 {
 private:
-    string vardas, pavarde;
-    float vidurkis = 0;
-    float mediana = 0;
+    string name, surname;
+    float average = 0;
+    float median = 0;
 
 public:
-    Studentas(string vard, string pav, float vid, float med)
+    Student(string nam, string sur, float avg, float med)
     {
-        vardas = vard;
-        pavarde = pav;
-        vidurkis = vid;
-        mediana = med;
+        name = nam;
+        surname = sur;
+        average = avg;
+        median = med;
     }
-    Studentas()
+    Student()
     {
-        vardas = "";
-        pavarde = "";
-        vidurkis = 0;
-        mediana = 0;
+        name = "";
+        surname = "";
+        average = 0;
+        median = 0;
     }
     
-    friend ostream &operator<<(std::ostream &out, const Studentas &s)
+    friend ostream &operator<<(std::ostream &out, const Student &s)
     {
-        out << setw(15) << left << s.vardas << setw(20) << left << s.pavarde << setw(18) << left << setprecision(3) << s.vidurkis << setw(18) << left << setprecision(3) << s.mediana << endl;
+        out << setw(15) << left << s.name << setw(20) << left << s.surname << setw(18) << left
+            << setprecision(3) << s.average << setw(18) << left << setprecision(3) << s.median << endl;
         return out;
     }
 
-    string getVardas() const
+    string getName() const
     {
-        return vardas;
+        return name;
     }
-    string getPavarde() const
+    string getSurname() const
     {
-        return pavarde;
+        return surname;
     }
-    float getVidurkis() const
+    float getAverage() const
     {
-        return vidurkis;
+        return average;
     }
-    float getMediana() const
+    float getMedian() const
     {
-        return mediana;
+        return median;
     }
 };
 
 
 
-float vidurkioSkaiciavimas(Pazymiai &temp);
-float medianosSkaiciavimas(Pazymiai &temp);
-void generuotiAtsitiktinius(vector<Studentas> &studentai);
-void pildymasKonsoleje(vector<Studentas> &studentai);
-void spausdinimas(vector<Studentas> &studentai, string const &filename);
-void failoSkaitymas(vector<Studentas> &studentai, string const &filename);
-Studentas duomenuIvedimas();
-bool compareName(const Studentas &a, const Studentas &b);
-bool compareGrade(const Studentas &a, const Studentas &b);
-vector<Studentas> splittinimas(vector<Studentas> &studentai);
-void rikiavimas(vector<Studentas> &studentai, string const &sortType);
-void failoGeneravimas();
+float countAverage(Grades &temp);
+float countMedian(Grades &temp);
+void generateRandom(vector<Student> &students);
+void consoleFill(vector<Student> &students);
+void print(vector<Student> &students, string const &filename);
+void readFile(vector<Student> &students, string const &filename);
+Student dataFill();
+bool compareName(const Student &a, const Student &b);
+bool compareGrade(const Student &a, const Student &b);
+vector<Student> split(vector<Student> &students);
+void sort(vector<Student> &students, string const &sortType);
+void generateFile();

@@ -2,12 +2,12 @@
 
 int main()
 {
-    vector<Studentas> studentai;
+    vector<Student> students;
 
-    int ivedimoTipas = 4;
+    int inputType = 4;
 
     
-    while (ivedimoTipas != 0 && ivedimoTipas != 1 && ivedimoTipas != 2 && ivedimoTipas != 3)
+    while (inputType != 0 && inputType != 1 && inputType != 2 && inputType != 3)
     {
         cout<<endl;
         cout<<"Pasirinkite, ką norite daryti: "<<endl;
@@ -15,16 +15,16 @@ int main()
              <<left<<setw(60)<<"Įvesti duomenis programoje (1)" << endl
              << left << setw(60)<<"Generuoti atsitiktinių pažymių failą (2)"
              <<left<<setw(60)<< "Generuoti ir iškart naudoti atsitiktinius (3)" << endl;
-        cin >> ivedimoTipas;
+        cin >> inputType;
         if (cin.fail())
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            ivedimoTipas = 4;
+            inputType = 4;
         }
     }
 
-    switch (ivedimoTipas)
+    switch (inputType)
     {
         case 0:
             while (true)
@@ -35,7 +35,7 @@ int main()
                     string filename;
                     cout << "Įveskite pažymių failo pavadinimą:" << endl;
                     cin >> filename;
-                    failoSkaitymas(studentai, filename);
+                    readFile(students, filename);
                     break;
                 }
                 catch (const exception &e)
@@ -45,28 +45,28 @@ int main()
             }
             break;
         case 1:
-            pildymasKonsoleje(studentai);
+            consoleFill(students);
             break;
         case 2:
-            failoGeneravimas();
+            generateFile();
             break;
         case 3:
-            generuotiAtsitiktinius(studentai);
+            generateRandom(students);
             break;
     }
 
-    if (studentai.empty())
+    if (students.empty())
         return 0;
 
-    rikiavimas(studentai, "grade");
-    vector<Studentas> studPass=splittinimas(studentai);
-    rikiavimas(studentai, "name");
-    rikiavimas(studPass, "name");
+    sort(students, "grade");
+    vector<Student> studPass=split(students);
+    sort(students, "name");
+    sort(studPass, "name");
 
-    spausdinimas(studPass, "studPass.txt");
+    print(studPass, "studPass.txt");
     studPass.clear();
-    spausdinimas(studentai, "studFail.txt");
-    studentai.clear();
+    print(students, "studFail.txt");
+    students.clear();
     
     return 0;
 }

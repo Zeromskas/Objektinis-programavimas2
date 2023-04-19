@@ -1,38 +1,38 @@
 #include "functions.h"
 
-void pildymasKonsoleje(vector<Studentas> &studentai)
+void consoleFill(vector<Student> &students)
 {
-    char testi;
+    char addMore;
 
     do
     {
-        studentai.push_back(duomenuIvedimas());
+        students.push_back(dataFill());
 
         do
         {
             cout << "Ar norite pridėti dar vieną studentą? (t - taip, n - ne) " << endl;
-            cin >> testi;
-        } while (testi != 't' && testi != 'n');
-    } while (testi == 't');
+            cin >> addMore;
+        } while (addMore != 't' && addMore != 'n');
+    } while (addMore == 't');
 }
 
-Studentas duomenuIvedimas()
+Student dataFill()
 {
-    string vardas, pavarde;
+    string name, surname;
     cout << "Įveskite vardą ir pavardę: " << endl;
-    cin >> vardas >> pavarde;
+    cin >> name >> surname;
 
     cout << "Įveskite pažymius (jei daugiau pažymių nėra, įveskite bet kokią raidę):" << endl;
 
-    Pazymiai pazymiai;
+    Grades grades;
 
-    int p = 0;
+    int grade = 0;
 
-    while (cin >> p)
+    while (cin >> grade)
     {
-        if (p >= 0 && p <= 10)
+        if (grade >= 0 && grade <= 10)
         {
-            pazymiai.nd.push_back(p);
+            grades.homeworkGrades.push_back(grade);
         }
         else
         {
@@ -46,10 +46,10 @@ Studentas duomenuIvedimas()
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    cout << "įveskite egzamino pažymį: " << endl;
-    cin >> pazymiai.egz;
+    cout << "Įveskite egzamino pažymį: " << endl;
+    cin >> grades.examGrade;
 
-    while (pazymiai.egz > 10 or pazymiai.egz < 0 or cin.fail())
+    while (grades.examGrade > 10 or grades.examGrade < 0 or cin.fail())
     {
         if (cin.fail())
         {
@@ -58,28 +58,28 @@ Studentas duomenuIvedimas()
         }
         cout << "Egzamino pažymys turi būti dešimtbalėje sistemoje" << endl;
         cout << "Iveskite egzamino pažymį: " << endl;
-        cin >> pazymiai.egz;
+        cin >> grades.examGrade;
     }
 
-    float vidurkis = vidurkioSkaiciavimas(pazymiai);
-    float mediana = medianosSkaiciavimas(pazymiai);
-    pazymiai.nd.clear();
+    float average = countAverage(grades);
+    float median = countMedian(grades);
+    grades.homeworkGrades.clear();
 
-    Studentas temp(vardas, pavarde, vidurkis, mediana);
+    Student temp(name, surname, average, median);
     cout << "Duomenys įrašyti" << endl;
     return temp;
 }
 
-void generuotiAtsitiktinius(vector<Studentas> &studentai)
+void generateRandom(vector<Student> &students)
 {
 
-    int studentuKiekis = 0;
-    int pazymiuKiekis = 0;
+    int studentCount = 0;
+    int gradeCount = 0;
     while (true)
     {
         cout << "Kiek studentų norite generuoti?" << endl;
-        cin >> studentuKiekis;
-        if (cin.fail() || studentuKiekis <= 0)
+        cin >> studentCount;
+        if (cin.fail() || studentCount <= 0)
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -92,8 +92,8 @@ void generuotiAtsitiktinius(vector<Studentas> &studentai)
     while (true)
     {
         cout << "Kiek pažymių norite generuoti kiekvienam studentui?" << endl;
-        cin >> pazymiuKiekis;
-        if (cin.fail() || pazymiuKiekis < 0)
+        cin >> gradeCount;
+        if (cin.fail() || gradeCount < 0)
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -108,35 +108,34 @@ void generuotiAtsitiktinius(vector<Studentas> &studentai)
 
     cout << "Duomenys generuojami..." << endl;
 
-    studentai.reserve(studentuKiekis);
+    students.reserve(studentCount);
 
-    Pazymiai pazymiai;
-    pazymiai.nd.reserve(pazymiuKiekis);
+    Grades grades;
+    grades.homeworkGrades.reserve(gradeCount);
 
-    for (int i = 0; i < studentuKiekis; ++i)
+    for (int i = 0; i < studentCount; ++i)
     {
-        string vardas = "vardas" + to_string(i);
-        string pavarde = "pavarde" + to_string(i);
-        for (int j = 0; j < pazymiuKiekis; j++)
-            pazymiai.nd.push_back(dist(mt));
-        pazymiai.egz = dist(mt);
-        float vidurkis = vidurkioSkaiciavimas(pazymiai);
-        float mediana = medianosSkaiciavimas(pazymiai);
-        pazymiai.nd.clear();
-        studentai.push_back(Studentas(vardas, pavarde, vidurkis, mediana));
+        string name = "Vardas" + to_string(i);
+        string surname = "Pavardė" + to_string(i);
+        for (int j = 0; j < gradeCount; j++)
+            grades.homeworkGrades.push_back(dist(mt));
+        grades.examGrade = dist(mt);
+        float average = countAverage(grades);
+        float median = countMedian(grades);
+        grades.homeworkGrades.clear();
+        students.push_back(Student(name, surname, average, median));
     }
 }
 
-void failoGeneravimas()
+void generateFile()
 {
-
-    int studentuKiekis = 0;
+    int studentCount = 0;
     
     while (true)
     {
         cout << "Kiek studentų norite generuoti?" << endl;
-        cin >> studentuKiekis;
-        if (cin.fail() || studentuKiekis <= 0 || studentuKiekis > 10000000)
+        cin >> studentCount;
+        if (cin.fail() || studentCount <= 0 || studentCount > 10000000)
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -147,12 +146,12 @@ void failoGeneravimas()
     }
 
 
-    int pazymiuKiekis = 0;
+    int gradeCount = 0;
     while (true)
     {
         cout << "Kiek pažymių norite generuoti kiekvienam studentui?" << endl;
-        cin >> pazymiuKiekis;
-        if (cin.fail() || pazymiuKiekis <= 0 || pazymiuKiekis > 10000000)
+        cin >> gradeCount;
+        if (cin.fail() || gradeCount <= 0 || gradeCount > 10000000)
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -162,7 +161,7 @@ void failoGeneravimas()
             break;
     }
 
-    string filename = "studentai" + to_string(studentuKiekis) + ".txt";
+    string filename = "studentai" + to_string(studentCount) + ".txt";
 
     std::chrono::high_resolution_clock::time_point start_time, end_time;
     start_time = high_resolution_clock::now();
@@ -175,35 +174,35 @@ void failoGeneravimas()
 
     out << setw(15) << left << "Vardas" << setw(20) << left << "Pavardė";
 
-    for (int i = 1; i <= pazymiuKiekis; i++)
+    for (int i = 1; i <= gradeCount; i++)
         out << "ND" << setw(3) << left << i;
 
     out << "Egzaminas" << endl;
 
     unique_ptr<ostringstream> oss(new ostringstream());
 
-    for (int i = 1; i <= studentuKiekis; i++)
+    for (int i = 1; i <= studentCount; i++)
     {
         (*oss) << "Vardas" << setw(9) << left << i << "Pavardė" << setw(12) << left << i;
-        for (int j = 0; j < pazymiuKiekis; j++)
+        for (int j = 0; j < gradeCount; j++)
             (*oss) << setw(5) << left << dist(mt);
 
         (*oss) << dist(mt) << endl;
-        if ((i + 1) % 10 == 0 || i == studentuKiekis)
+        if ((i + 1) % 10 == 0 || i == studentCount)
         {
             out << oss->str();
             oss->str("");
         }
-        if (i % (studentuKiekis / 100) == 0)
-            cout << 100 * i / studentuKiekis << "%" << endl;
+        if (i % (studentCount / 100) == 0)
+            cout << 100 * i / studentCount << "%" << endl;
     }
     end_time = high_resolution_clock::now();
     duration<double> dur = end_time - start_time;
-    cout<<"Atsitiktinių pažymių failas 'studentai"<<studentuKiekis<<".txt' sugeneruotas"<<endl;
+    cout<<"Atsitiktinių pažymių failas 'studentai"<<studentCount<<".txt' sugeneruotas"<<endl;
     cout<< dur.count() <<" s"<< endl;
 }
 
-void failoSkaitymas(vector<Studentas> &studentai, string const &filename)
+void readFile(vector<Student> &students, string const &filename)
 {
     ifstream in(filename);
 
@@ -216,42 +215,42 @@ void failoSkaitymas(vector<Studentas> &studentai, string const &filename)
 
     string line;
     getline(in, line);
-    int pazymiuKiekis = count(line.begin(), line.end(), 'N');
+    int gradeCount = count(line.begin(), line.end(), 'N');
 
     
-    Pazymiai pazymiai;
-    pazymiai.nd.reserve(pazymiuKiekis);
-    int p;
-    string vardas, pavarde;
-    float vidurkis, mediana;
+    Grades grades;
+    grades.homeworkGrades.reserve(gradeCount);
+    int grade;
+    string name, surname;
+    float average, median;
 
-    while (in >> vardas)
+    while (in >> name)
     {
-        in >> pavarde;
-        for (int i = 0; i < pazymiuKiekis; ++i)
+        in >> surname;
+        for (int i = 0; i < gradeCount; ++i)
         {
-            in >> p;
-            pazymiai.nd.push_back(p);
+            in >> grade;
+            grades.homeworkGrades.push_back(grade);
         }
-        in >> pazymiai.egz;
-        vidurkis = vidurkioSkaiciavimas(pazymiai);
-        mediana = medianosSkaiciavimas(pazymiai);
-        pazymiai.nd.clear();
-        studentai.push_back(Studentas(vardas, pavarde, vidurkis, mediana));
+        in >> grades.examGrade;
+        average = countAverage(grades);
+        median = countMedian(grades);
+        grades.homeworkGrades.clear();
+        students.push_back(Student(name, surname, average, median));
     }
     in.close();
 }
 
-void rikiavimas(vector<Studentas> &studentai, string const &sortType)
+void sort(vector<Student> &students, string const &sortType)
 {
     cout<<"Duomenys rikiuojami pagal "<<sortType<<endl;
     if (sortType == "name")
-        sort(studentai.begin(), studentai.end(), compareName);
+        sort(students.begin(), students.end(), compareName);
     else if (sortType == "grade")
-        sort(studentai.begin(), studentai.end(), compareGrade);
+        sort(students.begin(), students.end(), compareGrade);
 }
 
-void spausdinimas(vector<Studentas> &studentai, string const &filename)
+void print(vector<Student> &students, string const &filename)
 {
     cout<<"Duomenys išvedami..."<<endl;
 
@@ -264,10 +263,10 @@ void spausdinimas(vector<Studentas> &studentai, string const &filename)
     out << oss->str();
     oss->str("");
 
-    for (int i = 0; i < studentai.size(); ++i)
+    for (int i = 0; i < students.size(); ++i)
     {
-        (*oss) << studentai[i];
-        if ((i + 1) % 10 == 0 || i + 1 == studentai.size())
+        (*oss) << students[i];
+        if ((i + 1) % 10 == 0 || i + 1 == students.size())
         {
             out << oss->str();
             oss->str("");
@@ -275,46 +274,46 @@ void spausdinimas(vector<Studentas> &studentai, string const &filename)
     }
 
     out.close();
-    studentai.clear();
+    students.clear();
 }
 
-float vidurkioSkaiciavimas(Pazymiai &temp)
+float countAverage(Grades &temp)
 {
-    float vidurkis;
-    vidurkis = temp.nd.size() != 0 ? accumulate(temp.nd.begin(), temp.nd.end(), 0.0) / temp.nd.size() : 0.0;
-    return vidurkis * 0.4 + temp.egz * 0.6;
+    float average;
+    average = temp.homeworkGrades.size() != 0 ? accumulate(temp.homeworkGrades.begin(), temp.homeworkGrades.end(), 0.0) / temp.homeworkGrades.size() : 0.0;
+    return average * 0.4 + temp.examGrade * 0.6;
 }
 
-float medianosSkaiciavimas(Pazymiai &temp)
+float countMedian(Grades &temp)
 {
-    float mediana = 0;
+    float median = 0;
 
-    if (temp.nd.size() != 0)
+    if (temp.homeworkGrades.size() != 0)
     {
-        sort(temp.nd.begin(), temp.nd.end());
-        mediana = temp.nd.size() % 2 == 1 ? temp.nd[(temp.nd.size()) / 2] : (temp.nd[(temp.nd.size()) / 2 - 1] + temp.nd[(temp.nd.size()) / 2]) * 1.0 / 2.0;
+        sort(temp.homeworkGrades.begin(), temp.homeworkGrades.end());
+        median = temp.homeworkGrades.size() % 2 == 1 ? temp.homeworkGrades[(temp.homeworkGrades.size()) / 2] : (temp.homeworkGrades[(temp.homeworkGrades.size()) / 2 - 1] + temp.homeworkGrades[(temp.homeworkGrades.size()) / 2]) * 1.0 / 2.0;
     }
-    return 0.4 * mediana + 0.6 * temp.egz;
+    return 0.4 * median + 0.6 * temp.examGrade;
 } 
 
-bool compareName(const Studentas &a, const Studentas &b)
+bool compareName(const Student &a, const Student &b)
 {
-    if (a.getPavarde() == b.getPavarde())
-        return a.getVardas() < b.getVardas();
+    if (a.getSurname() == b.getSurname())
+        return a.getName() < b.getName();
     else
-        return a.getPavarde() < b.getPavarde();
+        return a.getSurname() < b.getSurname();
 }
 
-bool compareGrade(const Studentas &a, const Studentas &b)
+bool compareGrade(const Student &a, const Student &b)
 {
-    return a.getVidurkis() < b.getVidurkis();
+    return a.getAverage() < b.getAverage();
 }
 
-vector<Studentas> splittinimas(vector<Studentas> &studentai)
+vector<Student> split(vector<Student> &students)
 {
     cout<<"Duomenys dalinami"<<endl;
-    auto it = std::find_if(studentai.begin(), studentai.end(), [](const auto &s) { return s.getVidurkis() >= 5; });
-    vector<Studentas> temp (it, studentai.end());
-    studentai.resize(studentai.size()-temp.size());
+    auto it = std::find_if(students.begin(), students.end(), [](const auto &s) { return s.getAverage() >= 5; });
+    vector<Student> temp (it, students.end());
+    students.resize(students.size()-temp.size());
     return temp;
 }
