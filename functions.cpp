@@ -266,7 +266,7 @@ void spausdinimas(vector<Studentas> &studentai, string const &filename)
 
     for (int i = 0; i < studentai.size(); ++i)
     {
-        (*oss) << studentai[i].output().rdbuf();
+        (*oss) << studentai[i];
         if ((i + 1) % 10 == 0 || i + 1 == studentai.size())
         {
             out << oss->str();
@@ -317,16 +317,4 @@ vector<Studentas> splittinimas(vector<Studentas> &studentai)
     vector<Studentas> temp (it, studentai.end());
     studentai.resize(studentai.size()-temp.size());
     return temp;
-}
-
-void splittinimas2(vector<Studentas> &studentai, vector<Studentas> &studPass, vector<Studentas> &studFail)
-{
-    cout << "Duomenys dalinami" << endl;
-    auto it = std::find_if(studentai.begin(), studentai.end(), [](const auto &s) { return s.getVidurkis() >= 5; });
-    studPass.resize(std::distance(it, studentai.end()));
-    copy(it, studentai.end(), studPass.begin());
-    std::advance(it, -1);
-    studFail.resize(std::distance(studentai.begin(), it));
-    copy(studentai.begin(), it, studFail.begin());
-    studentai.clear();
 }

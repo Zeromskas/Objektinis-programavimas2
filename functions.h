@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ostream>
 #include <iomanip>
 #include <string>
 #include <algorithm>
@@ -26,6 +27,7 @@ using std::left;
 using std::mt19937;
 using std::numeric_limits;
 using std::ofstream;
+using std::ostream;
 using std::ostringstream;
 using std::random_device;
 using std::right;
@@ -46,14 +48,20 @@ using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 
+struct Pazymiai
+{
+    vector<int> nd;
+    int egz = 0;
+};
 
 class Studentas
 {
-    private:
+private:
     string vardas, pavarde;
     float vidurkis = 0;
     float mediana = 0;
-    public:
+
+public:
     Studentas(string vard, string pav, float vid, float med)
     {
         vardas = vard;
@@ -68,6 +76,13 @@ class Studentas
         vidurkis = 0;
         mediana = 0;
     }
+    
+    friend ostream &operator<<(std::ostream &out, const Studentas &s)
+    {
+        out << setw(15) << left << s.vardas << setw(20) << left << s.pavarde << setw(18) << left << setprecision(3) << s.vidurkis << setw(18) << left << setprecision(3) << s.mediana << endl;
+        return out;
+    }
+
     string getVardas() const
     {
         return vardas;
@@ -84,20 +99,9 @@ class Studentas
     {
         return mediana;
     }
-
-    ostringstream output()
-    {
-        ostringstream temp;
-        temp << setw(15) << left << vardas << setw(20) << left << pavarde << setw(18) << left << setprecision(3) << vidurkis << setw(18) << left << setprecision(3) << mediana << endl;
-        return temp;
-    }
 };
 
-struct Pazymiai
-{
-    vector<int> nd;
-    int egz = 0;
-};
+
 
 float vidurkioSkaiciavimas(Pazymiai &temp);
 float medianosSkaiciavimas(Pazymiai &temp);
@@ -111,4 +115,3 @@ bool compareGrade(const Studentas &a, const Studentas &b);
 vector<Studentas> splittinimas(vector<Studentas> &studentai);
 void rikiavimas(vector<Studentas> &studentai, string const &sortType);
 void failoGeneravimas();
-void splittinimas2(vector<Studentas> &studentai, vector<Studentas> &studPass, vector<Studentas> &studFail);
