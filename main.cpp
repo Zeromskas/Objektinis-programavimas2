@@ -57,15 +57,12 @@ int main()
     if (students.empty())
         return 0;
 
-    sort(students, "grade");
+    sort(students.begin(), students.end(), compareName);
     vector<Student> studPass=split(students);
-    sort(students, "name");
-    sort(studPass, "name");
-
+    
     print(studPass, "studPass.txt");
-    studPass.clear();
     print(students, "studFail.txt");
-    students.clear();
+
     
     return 0;
 }

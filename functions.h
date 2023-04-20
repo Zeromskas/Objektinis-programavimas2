@@ -47,6 +47,7 @@ using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
+using std::stringstream;
 
 
 
@@ -54,10 +55,20 @@ class Student
 {
 private:
     string name, surname;
-    float average = 0;
-    float median = 0;
+
+    float average, median;
 
 public:
+
+    Student(string nam, string sur, vector<int> &homeworkGrades, int examGrade)
+    {
+        name = nam;
+        surname = sur;
+        average = countFinal(countAverage(homeworkGrades), examGrade);
+        median = countFinal(countMedian(homeworkGrades), examGrade);
+        homeworkGrades.clear();
+
+    }
     Student(string nam, string sur, float avg, float med)
     {
         name = nam;
@@ -80,6 +91,30 @@ public:
         return out;
     }
 
+    float countAverage(vector<int> const &homeworkGrades)
+    {
+        float average;
+        average = homeworkGrades.size() != 0 ? accumulate(homeworkGrades.begin(), homeworkGrades.end(), 0.0) / homeworkGrades.size() : 0.0;
+        return average;
+    }
+
+    float countMedian(vector<int> &homeworkGrades)
+    {
+        float median = 0;
+
+        if (homeworkGrades.size() != 0)
+        {
+            sort(homeworkGrades.begin(), homeworkGrades.end());
+            median = homeworkGrades.size() % 2 == 1 ? homeworkGrades[(homeworkGrades.size()) / 2] : (homeworkGrades[(homeworkGrades.size()) / 2 - 1] + homeworkGrades[(homeworkGrades.size()) / 2]) * 1.0 / 2.0;
+        }
+        return median;
+    }
+
+    float countFinal(float grade, int &exam)
+    {
+        return grade * 0.4 + exam * 0.6;
+    }
+
     string getName() const
     {
         return name;
@@ -98,16 +133,11 @@ public:
     }
 };
 
-float countAverage(vector<int> &homeworkGrades);
-float countMedian(vector<int> &homeworkGrades);
-float countFinal(float grade, int &exam);
 void generateRandom(vector<Student> &students);
 void consoleFill(vector<Student> &students);
 void print(vector<Student> &students, string const &filename);
 void readFile(vector<Student> &students, string const &filename);
-Student dataFill();
+void dataFill(vector<Student> &students);
 bool compareName(const Student &a, const Student &b);
-bool compareGrade(const Student &a, const Student &b);
 vector<Student> split(vector<Student> &students);
-void sort(vector<Student> &students, string const &sortType);
 void generateFile();

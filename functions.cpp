@@ -6,7 +6,7 @@ void consoleFill(vector<Student> &students)
 
     do
     {
-        students.push_back(dataFill());
+        dataFill(students);
 
         do
         {
@@ -16,7 +16,7 @@ void consoleFill(vector<Student> &students)
     } while (addMore == 't');
 }
 
-Student dataFill()
+void dataFill(vector<Student> &students)
 {
     string name, surname;
     cout << "Įveskite vardą ir pavardę: " << endl;
@@ -46,11 +46,10 @@ Student dataFill()
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    int examGrade;
     cout << "Įveskite egzamino pažymį: " << endl;
-    cin >> examGrade;
+    cin >> grade;
 
-    while (examGrade > 10 or examGrade < 0 or cin.fail())
+    while (grade > 10 or grade < 0 or cin.fail())
     {
         if (cin.fail())
         {
@@ -59,16 +58,12 @@ Student dataFill()
         }
         cout << "Egzamino pažymys turi būti dešimtbalėje sistemoje" << endl;
         cout << "Iveskite egzamino pažymį: " << endl;
-        cin >> examGrade;
+        cin >> grade;
     }
 
-    float average = countFinal(countAverage(homeworkGrades), examGrade);
-    float median = countFinal(countMedian(homeworkGrades), examGrade);
-    homeworkGrades.clear();
+    students.emplace_back(name, surname, homeworkGrades, grade);
 
-    Student temp(name, surname, average, median);
     cout << "Duomenys įrašyti" << endl;
-    return temp;
 }
 
 void generateRandom(vector<Student> &students)
@@ -117,22 +112,16 @@ void generateRandom(vector<Student> &students)
 
     for (int i = 0; i < studentCount; ++i)
     {
-        string name = "Vardas" + to_string(i);
-        string surname = "Pavardė" + to_string(i);
         for (int j = 0; j < gradeCount; j++)
             homeworkGrades.push_back(dist(mt));
-        int examGrade = dist(mt);
-        float average = countFinal(countAverage(homeworkGrades), examGrade);
-        float median = countFinal(countMedian(homeworkGrades), examGrade);
-        homeworkGrades.clear();
-        students.push_back(Student(name, surname, average, median));
+        students.emplace_back("Vardas" + to_string(i), "Pavardė" + to_string(i), homeworkGrades, dist(mt));
     }
 }
 
 void generateFile()
 {
     int studentCount = 0;
-    
+
     while (true)
     {
         cout << "Kiek studentų norite generuoti?" << endl;
@@ -146,7 +135,6 @@ void generateFile()
         else
             break;
     }
-
 
     int gradeCount = 0;
     while (true)
@@ -183,6 +171,8 @@ void generateFile()
 
     unique_ptr<ostringstream> oss(new ostringstream());
 
+    bool displayPercentage = studentCount > 100;
+
     for (int i = 1; i <= studentCount; i++)
     {
         (*oss) << "Vardas" << setw(9) << left << i << "Pavardė" << setw(12) << left << i;
@@ -195,13 +185,14 @@ void generateFile()
             out << oss->str();
             oss->str("");
         }
-        if (i % (studentCount / 100) == 0)
-            cout << 100 * i / studentCount << "%" << endl;
+        if (displayPercentage)
+            if (i % (studentCount / 100) == 0)
+                cout << 100 * i / studentCount << "%" << endl;
     }
     end_time = high_resolution_clock::now();
     duration<double> dur = end_time - start_time;
-    cout<<"Atsitiktinių pažymių failas 'studentai"<<studentCount<<".txt' sugeneruotas"<<endl;
-    cout<< dur.count() <<" s"<< endl;
+    cout << "Atsitiktinių pažymių failas 'studentai" << studentCount << ".txt' sugeneruotas" << endl;
+    cout << dur.count() << " s" << endl;
 }
 
 void readFile(vector<Student> &students, string const &filename)
@@ -212,50 +203,38 @@ void readFile(vector<Student> &students, string const &filename)
     {
         throw runtime_error("Nepavyko atidaryti failo!");
     }
-    cout<<filename<<endl;
+    cout << filename << endl;
     cout << "Duomenys nuskaitomi..." << endl;
 
     string line;
     getline(in, line);
     int gradeCount = count(line.begin(), line.end(), 'N');
 
-    
     vector<int> homeworkGrades;
     int examGrade;
     homeworkGrades.reserve(gradeCount);
     int grade;
     string name, surname;
 
-
-    while (in >> name)
+    while (getline(in, line))
     {
-        in >> surname;
+        stringstream ss(line);
+
+        ss >> name >> surname;
         for (int i = 0; i < gradeCount; ++i)
         {
-            in >> grade;
-            homeworkGrades.push_back(grade);
+            ss >> homeworkGrades[i];
         }
-        in >> examGrade;
-        float average = countFinal(countAverage(homeworkGrades), examGrade);
-        float median = countFinal(countMedian(homeworkGrades), examGrade);
-        homeworkGrades.clear();
-        students.push_back(Student(name, surname, average, median));
+        int grade;
+        ss >> grade;
+        students.emplace_back(name, surname, homeworkGrades, grade);
     }
     in.close();
 }
 
-void sort(vector<Student> &students, string const &sortType)
-{
-    cout<<"Duomenys rikiuojami pagal "<<sortType<<endl;
-    if (sortType == "name")
-        sort(students.begin(), students.end(), compareName);
-    else if (sortType == "grade")
-        sort(students.begin(), students.end(), compareGrade);
-}
-
 void print(vector<Student> &students, string const &filename)
 {
-    cout<<"Duomenys išvedami..."<<endl;
+    cout << "Duomenys išvedami..." << endl;
 
     ofstream out(filename);
 
@@ -278,30 +257,7 @@ void print(vector<Student> &students, string const &filename)
 
     out.close();
     students.clear();
-}
-
-float countAverage(vector<int> &homeworkGrades)
-{
-    float average;
-    average = homeworkGrades.size() != 0 ? accumulate(homeworkGrades.begin(), homeworkGrades.end(), 0.0) / homeworkGrades.size() : 0.0;
-    return average;
-}
-
-float countMedian(vector<int> &homeworkGrades)
-{
-    float median = 0;
-
-    if (homeworkGrades.size() != 0)
-    {
-        sort(homeworkGrades.begin(), homeworkGrades.end());
-        median = homeworkGrades.size() % 2 == 1 ? homeworkGrades[(homeworkGrades.size()) / 2] : (homeworkGrades[(homeworkGrades.size()) / 2 - 1] + homeworkGrades[(homeworkGrades.size()) / 2]) * 1.0 / 2.0;
-    }
-    return median;
-} 
-
-float countFinal(float grade, int &exam)
-{
-    return grade*0.4+exam*0.6;
+    students.shrink_to_fit();
 }
 
 bool compareName(const Student &a, const Student &b)
@@ -312,16 +268,13 @@ bool compareName(const Student &a, const Student &b)
         return a.getSurname() < b.getSurname();
 }
 
-bool compareGrade(const Student &a, const Student &b)
-{
-    return a.getAverage() < b.getAverage();
-}
-
 vector<Student> split(vector<Student> &students)
 {
-    cout<<"Duomenys dalinami"<<endl;
-    auto it = std::find_if(students.begin(), students.end(), [](const auto &s) { return s.getAverage() >= 5; });
-    vector<Student> temp (it, students.end());
-    students.resize(students.size()-temp.size());
+    cout << "Duomenys dalinami" << endl;
+    auto it = std::stable_partition(students.begin(), students.end(), [](const auto &s)
+                                    { return s.getAverage() < 5; });
+    vector<Student> temp(it, students.end());
+    students.resize(students.size() - temp.size());
+    students.shrink_to_fit();
     return temp;
 }
