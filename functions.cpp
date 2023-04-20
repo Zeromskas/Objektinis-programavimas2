@@ -24,7 +24,7 @@ Student dataFill()
 
     cout << "Įveskite pažymius (jei daugiau pažymių nėra, įveskite bet kokią raidę):" << endl;
 
-    Grades grades;
+    vector<int> homeworkGrades;
 
     int grade = 0;
 
@@ -32,7 +32,7 @@ Student dataFill()
     {
         if (grade >= 0 && grade <= 10)
         {
-            grades.homeworkGrades.push_back(grade);
+            homeworkGrades.push_back(grade);
         }
         else
         {
@@ -46,10 +46,11 @@ Student dataFill()
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
+    int examGrade;
     cout << "Įveskite egzamino pažymį: " << endl;
-    cin >> grades.examGrade;
+    cin >> examGrade;
 
-    while (grades.examGrade > 10 or grades.examGrade < 0 or cin.fail())
+    while (examGrade > 10 or examGrade < 0 or cin.fail())
     {
         if (cin.fail())
         {
@@ -58,12 +59,12 @@ Student dataFill()
         }
         cout << "Egzamino pažymys turi būti dešimtbalėje sistemoje" << endl;
         cout << "Iveskite egzamino pažymį: " << endl;
-        cin >> grades.examGrade;
+        cin >> examGrade;
     }
 
-    float average = countAverage(grades);
-    float median = countMedian(grades);
-    grades.homeworkGrades.clear();
+    float average = countFinal(countAverage(homeworkGrades), examGrade);
+    float median = countFinal(countMedian(homeworkGrades), examGrade);
+    homeworkGrades.clear();
 
     Student temp(name, surname, average, median);
     cout << "Duomenys įrašyti" << endl;
@@ -110,19 +111,20 @@ void generateRandom(vector<Student> &students)
 
     students.reserve(studentCount);
 
-    Grades grades;
-    grades.homeworkGrades.reserve(gradeCount);
+    vector<int> homeworkGrades;
+
+    homeworkGrades.reserve(gradeCount);
 
     for (int i = 0; i < studentCount; ++i)
     {
         string name = "Vardas" + to_string(i);
         string surname = "Pavardė" + to_string(i);
         for (int j = 0; j < gradeCount; j++)
-            grades.homeworkGrades.push_back(dist(mt));
-        grades.examGrade = dist(mt);
-        float average = countAverage(grades);
-        float median = countMedian(grades);
-        grades.homeworkGrades.clear();
+            homeworkGrades.push_back(dist(mt));
+        int examGrade = dist(mt);
+        float average = countFinal(countAverage(homeworkGrades), examGrade);
+        float median = countFinal(countMedian(homeworkGrades), examGrade);
+        homeworkGrades.clear();
         students.push_back(Student(name, surname, average, median));
     }
 }
@@ -218,11 +220,12 @@ void readFile(vector<Student> &students, string const &filename)
     int gradeCount = count(line.begin(), line.end(), 'N');
 
     
-    Grades grades;
-    grades.homeworkGrades.reserve(gradeCount);
+    vector<int> homeworkGrades;
+    int examGrade;
+    homeworkGrades.reserve(gradeCount);
     int grade;
     string name, surname;
-    float average, median;
+
 
     while (in >> name)
     {
@@ -230,12 +233,12 @@ void readFile(vector<Student> &students, string const &filename)
         for (int i = 0; i < gradeCount; ++i)
         {
             in >> grade;
-            grades.homeworkGrades.push_back(grade);
+            homeworkGrades.push_back(grade);
         }
-        in >> grades.examGrade;
-        average = countAverage(grades);
-        median = countMedian(grades);
-        grades.homeworkGrades.clear();
+        in >> examGrade;
+        float average = countFinal(countAverage(homeworkGrades), examGrade);
+        float median = countFinal(countMedian(homeworkGrades), examGrade);
+        homeworkGrades.clear();
         students.push_back(Student(name, surname, average, median));
     }
     in.close();
@@ -277,24 +280,29 @@ void print(vector<Student> &students, string const &filename)
     students.clear();
 }
 
-float countAverage(Grades &temp)
+float countAverage(vector<int> &homeworkGrades)
 {
     float average;
-    average = temp.homeworkGrades.size() != 0 ? accumulate(temp.homeworkGrades.begin(), temp.homeworkGrades.end(), 0.0) / temp.homeworkGrades.size() : 0.0;
-    return average * 0.4 + temp.examGrade * 0.6;
+    average = homeworkGrades.size() != 0 ? accumulate(homeworkGrades.begin(), homeworkGrades.end(), 0.0) / homeworkGrades.size() : 0.0;
+    return average;
 }
 
-float countMedian(Grades &temp)
+float countMedian(vector<int> &homeworkGrades)
 {
     float median = 0;
 
-    if (temp.homeworkGrades.size() != 0)
+    if (homeworkGrades.size() != 0)
     {
-        sort(temp.homeworkGrades.begin(), temp.homeworkGrades.end());
-        median = temp.homeworkGrades.size() % 2 == 1 ? temp.homeworkGrades[(temp.homeworkGrades.size()) / 2] : (temp.homeworkGrades[(temp.homeworkGrades.size()) / 2 - 1] + temp.homeworkGrades[(temp.homeworkGrades.size()) / 2]) * 1.0 / 2.0;
+        sort(homeworkGrades.begin(), homeworkGrades.end());
+        median = homeworkGrades.size() % 2 == 1 ? homeworkGrades[(homeworkGrades.size()) / 2] : (homeworkGrades[(homeworkGrades.size()) / 2 - 1] + homeworkGrades[(homeworkGrades.size()) / 2]) * 1.0 / 2.0;
     }
-    return 0.4 * median + 0.6 * temp.examGrade;
+    return median;
 } 
+
+float countFinal(float grade, int &exam)
+{
+    return grade*0.4+exam*0.6;
+}
 
 bool compareName(const Student &a, const Student &b)
 {

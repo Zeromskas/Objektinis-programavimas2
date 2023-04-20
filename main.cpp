@@ -6,7 +6,6 @@ int main()
 
     int inputType = 4;
 
-    
     while (inputType != 0 && inputType != 1 && inputType != 2 && inputType != 3)
     {
         cout<<endl;

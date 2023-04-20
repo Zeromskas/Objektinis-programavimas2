@@ -48,11 +48,7 @@ using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 
-struct Grades
-{
-    vector<int> homeworkGrades;
-    int examGrade = 0;
-};
+
 
 class Student
 {
@@ -76,7 +72,7 @@ public:
         average = 0;
         median = 0;
     }
-    
+
     friend ostream &operator<<(std::ostream &out, const Student &s)
     {
         out << setw(15) << left << s.name << setw(20) << left << s.surname << setw(18) << left
@@ -102,10 +98,9 @@ public:
     }
 };
 
-
-
-float countAverage(Grades &temp);
-float countMedian(Grades &temp);
+float countAverage(vector<int> &homeworkGrades);
+float countMedian(vector<int> &homeworkGrades);
+float countFinal(float grade, int &exam);
 void generateRandom(vector<Student> &students);
 void consoleFill(vector<Student> &students);
 void print(vector<Student> &students, string const &filename);
