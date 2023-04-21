@@ -41,3 +41,6 @@ test2
 .gitignore
 studentai10M.txt
 studentai10.txt
+studentai10k.txt
+studentai100k.txt
+studentai1k.txt

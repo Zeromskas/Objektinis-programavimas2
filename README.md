@@ -1,4 +1,27 @@
-Naudojimo instrukcija: Atidaryti terminalą programos aplanke, įvesti make, spaust enter ir sekti instrukcijas terminale
+Naudojimo instrukcija: Atidaryti terminalą programos aplanke, įvesti "make", spaust enter ir sekti instrukcijas terminale. Norint patekti į greitavikos testavimo režimą, terminale įvesti "make test"
+
+# v1.1
+
+Programos kodas perdarytas naudojant klases vietoj strukūrų.
+Programa veikė šiek tiek lėčiau, bet pats kodas atrodo paprastesnis ir yra lengviau suprantamas.
+Atlikti algoritmų patobulinimai beveik suvienodino programos darbo laiką su tuo, kuris buvo gautas naudojant 1.0 (struktūrų) versiją. Pavyko išgauti efektyvesnį ir stabilesnį RAM naudojimą.
+
+Testavimai atlikti naudojant nurodyto kiekio studentų failus, iš kurių kiekvienas turėjo po 15 pažymių (+ egzamino pažymys). Pgrindiniai testavimai atlikti naudojant -O3 optimizacija.
+Su 10M studentų RAM apkrova - 661,8MB (buvo 809MB)
+
+|         | **1k**       | **10k**     | **100k**   | **1M**    | **10M**   |
+| ------- | ------------ | ----------- | ---------- | --------- | --------- |
+| **1.0** | _0.00537378_ | _0.0539128_ | _0.535289_ | _5.31828_ | _52.0414_ |
+| **1.1** | _0.00555412_ | _0.0521482_ | _0.526918_ | _5.33006_ | _52.9485_ |
+
+Optimizavimo flag'ų testavimas (10M):
+
+|         | Laikas     | Paleidimo failo užimama vieta |
+| ------- | ---------- | ----------------------------- |
+| **-O3** | _52.0414_  | 82KB                          |
+| **-O2** | _54.2535_  | 82KB                          |
+| **-O1** | _60.7683_  | 82KB                          |
+| **-**   | _179.7434_ | 196KB                         |
 
 # v1.0
 
