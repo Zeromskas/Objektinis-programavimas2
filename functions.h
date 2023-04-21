@@ -48,6 +48,7 @@ using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 using std::stringstream;
+using std::istream;
 
 
 
@@ -80,8 +81,8 @@ public:
     {
         name = "";
         surname = "";
-        average = 0;
-        median = 0;
+        average = 0.0;
+        median = 0.0;
     }
 
     friend ostream &operator<<(std::ostream &out, const Student &s)
@@ -89,6 +90,33 @@ public:
         out << setw(15) << left << s.name << setw(20) << left << s.surname << setw(18) << left
             << setprecision(3) << s.average << setw(18) << left << setprecision(3) << s.median << endl;
         return out;
+    }
+
+    friend istream &operator>>(std::istream &in, vector<Student> &s)
+    {
+        string line;
+        getline(in, line);
+        if (!in)
+        {
+            return in;
+        }
+
+        stringstream ss(line);
+
+        string name, surname;
+        ss >> name >> surname;
+
+        vector<int>homeworkGrades;
+        int grade;
+        while (ss >> grade)
+        {
+            homeworkGrades.push_back(grade);
+        }
+
+        int examGrade = homeworkGrades.back();
+        homeworkGrades.pop_back();
+        s.emplace_back(name, surname, homeworkGrades, examGrade);
+        return in;
     }
 
     float countAverage(vector<int> const &homeworkGrades)

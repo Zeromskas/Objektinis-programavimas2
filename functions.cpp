@@ -208,27 +208,9 @@ void readFile(vector<Student> &students, string const &filename)
 
     string line;
     getline(in, line);
-    int gradeCount = count(line.begin(), line.end(), 'N');
 
-    vector<int> homeworkGrades;
-    int examGrade;
-    homeworkGrades.reserve(gradeCount);
-    int grade;
-    string name, surname;
-
-    while (getline(in, line))
-    {
-        stringstream ss(line);
-
-        ss >> name >> surname;
-        for (int i = 0; i < gradeCount; ++i)
-        {
-            ss >> homeworkGrades[i];
-        }
-        int grade;
-        ss >> grade;
-        students.emplace_back(name, surname, homeworkGrades, grade);
-    }
+    while(in>>students);
+    
     in.close();
 }
 
