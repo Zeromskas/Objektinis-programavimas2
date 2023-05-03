@@ -1,5 +1,12 @@
 Naudojimo instrukcija: Atidaryti terminalą programos aplanke, įvesti "make", spaust enter ir sekti instrukcijas terminale. Norint patekti į greitavikos testavimo režimą, terminale įvesti "make test"
 
+# v1.2
+
+Pertvarkytas kodas, kad būtų paprasčiau jį skaityti ir suprasti.
+Pridėti move ir copy construktoriai
+Pridėti move ir copy priskirimo operatoriai
+Pridėtas >> operatorius studento duomenų nuskaitymui
+
 # v1.1
 
 Programos kodas perdarytas naudojant klases vietoj strukūrų.

@@ -23,7 +23,9 @@ using std::exception;
 using std::fixed;
 using std::getline;
 using std::ifstream;
+using std::istream;
 using std::left;
+using std::move;
 using std::mt19937;
 using std::numeric_limits;
 using std::ofstream;
@@ -37,6 +39,7 @@ using std::setw;
 using std::sort;
 using std::streamsize;
 using std::string;
+using std::stringstream;
 using std::swap;
 using std::to_string;
 using std::uniform_int_distribution;
@@ -47,20 +50,14 @@ using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
-using std::stringstream;
-using std::istream;
-
-
 
 class Student
 {
 private:
     string name, surname;
-
     float average, median;
 
 public:
-
     Student(string nam, string sur, vector<int> &homeworkGrades, int examGrade)
     {
         name = nam;
@@ -68,7 +65,6 @@ public:
         average = countFinal(countAverage(homeworkGrades), examGrade);
         median = countFinal(countMedian(homeworkGrades), examGrade);
         homeworkGrades.clear();
-
     }
     Student(string nam, string sur, float avg, float med)
     {
@@ -76,6 +72,20 @@ public:
         surname = sur;
         average = avg;
         median = med;
+    }
+    Student(const Student &other)
+    {
+        this->name = other.name;
+        this->surname = other.surname;
+        this->average = other.average;
+        this->median = other.median;
+    }
+    Student(Student &&other)
+    {
+        this->name = std::move(other.name);
+        this->surname = std::move(other.surname);
+        this->average = std::move(other.average);
+        this->median = std::move(other.median);
     }
     Student()
     {
@@ -91,7 +101,6 @@ public:
             << setprecision(3) << s.average << setw(18) << left << setprecision(3) << s.median << endl;
         return out;
     }
-
     friend istream &operator>>(std::istream &in, vector<Student> &s)
     {
         string line;
@@ -106,7 +115,7 @@ public:
         string name, surname;
         ss >> name >> surname;
 
-        vector<int>homeworkGrades;
+        vector<int> homeworkGrades;
         int grade;
         while (ss >> grade)
         {
@@ -118,6 +127,28 @@ public:
         s.emplace_back(name, surname, homeworkGrades, examGrade);
         return in;
     }
+    Student &operator=(const Student &other)
+    {
+        if (this != &other)
+        {
+            this->name = other.name;
+            this->surname = other.surname;
+            this->average = other.average;
+            this->median = other.median;
+        }
+        return *this;
+    }
+    Student &operator=(Student &&other)
+    {
+        if (this != &other)
+        {
+            name = std::move(other.name);
+            surname = std::move(other.surname);
+            average = std::move(other.average);
+            median = std::move(other.median);
+        }
+        return *this;
+    }
 
     float countAverage(vector<int> const &homeworkGrades)
     {
@@ -125,7 +156,6 @@ public:
         average = homeworkGrades.size() != 0 ? accumulate(homeworkGrades.begin(), homeworkGrades.end(), 0.0) / homeworkGrades.size() : 0.0;
         return average;
     }
-
     float countMedian(vector<int> &homeworkGrades)
     {
         float median = 0;
@@ -137,10 +167,15 @@ public:
         }
         return median;
     }
-
     float countFinal(float grade, int &exam)
     {
         return grade * 0.4 + exam * 0.6;
+    }
+
+    ~Student()
+    {
+        name.clear();
+        surname.clear();
     }
 
     string getName() const
@@ -164,6 +199,7 @@ public:
 void generateRandom(vector<Student> &students);
 void consoleFill(vector<Student> &students);
 void print(vector<Student> &students, string const &filename);
+void printBoth(vector<Student> &students1, string const &filename1, vector<Student> &students2, string const &filename2);
 void readFile(vector<Student> &students, string const &filename);
 void dataFill(vector<Student> &students);
 bool compareName(const Student &a, const Student &b);

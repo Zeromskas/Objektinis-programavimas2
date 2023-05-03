@@ -1,5 +1,8 @@
 #include "functions.h"
 
+std::chrono::high_resolution_clock::time_point start_time, end_time;
+duration<double> dur;
+
 void consoleFill(vector<Student> &students)
 {
     char addMore;
@@ -98,11 +101,15 @@ void generateRandom(vector<Student> &students)
         else
             break;
     }
+
+    start_time = high_resolution_clock::now();
+
     random_device rd;
     mt19937 mt(rd());
     uniform_int_distribution<int> dist(0, 10);
 
-    cout << "Duomenys generuojami..." << endl;
+    cout << "Duomenys generuojami: ";
+    ;
 
     students.reserve(studentCount);
 
@@ -116,6 +123,12 @@ void generateRandom(vector<Student> &students)
             homeworkGrades.push_back(dist(mt));
         students.emplace_back("Vardas" + to_string(i), "Pavardė" + to_string(i), homeworkGrades, dist(mt));
     }
+
+    end_time = high_resolution_clock::now();
+    dur = end_time - start_time;
+    cout << dur.count() << " seconds";
+
+    cout << endl;
 }
 
 void generateFile()
@@ -153,7 +166,6 @@ void generateFile()
 
     string filename = "studentai" + to_string(studentCount) + ".txt";
 
-    std::chrono::high_resolution_clock::time_point start_time, end_time;
     start_time = high_resolution_clock::now();
 
     ofstream out(filename);
@@ -190,9 +202,11 @@ void generateFile()
                 cout << 100 * i / studentCount << "%" << endl;
     }
     end_time = high_resolution_clock::now();
-    duration<double> dur = end_time - start_time;
+    dur = end_time - start_time;
     cout << "Atsitiktinių pažymių failas 'studentai" << studentCount << ".txt' sugeneruotas" << endl;
-    cout << dur.count() << " s" << endl;
+    cout << dur.count() << " seconds";
+
+    cout << endl;
 }
 
 void readFile(vector<Student> &students, string const &filename)
@@ -204,20 +218,42 @@ void readFile(vector<Student> &students, string const &filename)
         throw runtime_error("Nepavyko atidaryti failo!");
     }
     cout << filename << endl;
-    cout << "Duomenys nuskaitomi..." << endl;
+    cout << "Duomenys nuskaitomi: ";
+
+    start_time = high_resolution_clock::now();
 
     string line;
     getline(in, line);
 
-    while(in>>students);
-    
+    while (in >> students)
+        ;
+
     in.close();
+
+    end_time = high_resolution_clock::now();
+    dur = end_time - start_time;
+    cout << dur.count() << " seconds";
+
+    cout << endl;
+}
+
+void printBoth(vector<Student> &students1, string const &filename1, vector<Student> &students2, string const &filename2)
+{
+    cout << "Duomenys išvedami: ";
+    start_time = high_resolution_clock::now();
+
+    print(students1, filename1);
+    print(students2, filename2);
+
+    end_time = high_resolution_clock::now();
+    dur = end_time - start_time;
+    cout << dur.count() << " seconds";
+
+    cout << endl;
 }
 
 void print(vector<Student> &students, string const &filename)
 {
-    cout << "Duomenys išvedami..." << endl;
-
     ofstream out(filename);
 
     unique_ptr<ostringstream> oss(new ostringstream());
@@ -252,11 +288,20 @@ bool compareName(const Student &a, const Student &b)
 
 vector<Student> split(vector<Student> &students)
 {
-    cout << "Duomenys dalinami" << endl;
+    start_time = high_resolution_clock::now();
+
+    cout << "Duomenys dalinami: ";
     auto it = std::stable_partition(students.begin(), students.end(), [](const auto &s)
                                     { return s.getAverage() < 5; });
     vector<Student> temp(it, students.end());
     students.resize(students.size() - temp.size());
     students.shrink_to_fit();
+
+    end_time = high_resolution_clock::now();
+    dur = end_time - start_time;
+    cout << dur.count() << " seconds";
+
+    cout << endl;
+
     return temp;
 }
