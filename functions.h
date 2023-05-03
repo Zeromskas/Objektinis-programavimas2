@@ -51,49 +51,48 @@ using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 
-class Student
+class Person
 {
-private:
+protected:
     string name, surname;
-    float average, median;
-
-public:
-    Student(string nam, string sur, vector<int> &homeworkGrades, int examGrade)
+    
+    Person(string nam, string sur)
     {
         name = nam;
         surname = sur;
+    }
+    Person()
+    {
+        name = "";
+        surname = "";
+    }
+    virtual ~Person() {
+        name.clear();
+        surname.clear();
+    }
+
+};
+
+class Student: public Person
+{
+private:
+    float average, median;
+
+public:
+    Student(string nam, string sur, vector<int> &homeworkGrades, int examGrade) : Person(nam, sur)
+    {
         average = countFinal(countAverage(homeworkGrades), examGrade);
         median = countFinal(countMedian(homeworkGrades), examGrade);
         homeworkGrades.clear();
     }
-    Student(string nam, string sur, float avg, float med)
-    {
-        name = nam;
-        surname = sur;
-        average = avg;
-        median = med;
-    }
-    Student(const Student &other)
-    {
-        this->name = other.name;
-        this->surname = other.surname;
-        this->average = other.average;
-        this->median = other.median;
-    }
-    Student(Student &&other)
-    {
-        this->name = std::move(other.name);
-        this->surname = std::move(other.surname);
-        this->average = std::move(other.average);
-        this->median = std::move(other.median);
-    }
-    Student()
-    {
-        name = "";
-        surname = "";
-        average = 0.0;
-        median = 0.0;
-    }
+    Student(string nam, string sur, float avg, float med) : Person(nam, sur), average(avg), median(med)
+    {}
+    Student(const Student &other) : Person(other.name, other.surname), average(other.average), median(other.median)
+    {}
+    Student(Student &&other) : Person(std::move(other.name), std::move(other.surname)), average(std::move(other.average)), median(std::move(other.median))
+    {}
+    Student() : Person(), average(0.0), median(0.0)
+    {}
 
     friend ostream &operator<<(std::ostream &out, const Student &s)
     {
