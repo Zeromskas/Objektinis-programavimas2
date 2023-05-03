@@ -8,11 +8,11 @@ prog: clean functions
 	g++ $(CPPFLAGS) main.cpp functions.o -o prog
 
 test: cleanStud testCompile
-	./test
+	./speedtest
 	make clean
 
 testCompile: clean functions
-	g++ $(CPPFLAGS) testing.cpp functions.o -o test
+	g++ $(CPPFLAGS) speed_testing.cpp functions.o -o speedtest
 
 functions:
 	g++ $(CPPFLAGS) -c functions.cpp

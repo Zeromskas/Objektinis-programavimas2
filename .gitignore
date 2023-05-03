@@ -44,3 +44,10 @@ studentai10.txt
 studentai10k.txt
 studentai100k.txt
 studentai1k.txt
+test.dSYM/Contents/Info.plist
+.gitignore
+.vscode/launch.json
+output/functions
+prog.dSYM/Contents/Info.plist
+temp.dSYM/Contents/Info.plist
+temp.dSYM/Contents/Resources/DWARF/temp

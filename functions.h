@@ -82,10 +82,10 @@ public:
     }
     Student(Student &&other)
     {
-        this->name = move(other.name);
-        this->surname = move(other.surname);
-        this->average = move(other.average);
-        this->median = move(other.median);
+        this->name = std::move(other.name);
+        this->surname = std::move(other.surname);
+        this->average = std::move(other.average);
+        this->median = std::move(other.median);
     }
     Student()
     {
@@ -144,10 +144,8 @@ public:
         {
             name = std::move(other.name);
             surname = std::move(other.surname);
-            average = other.average;
-            median = other.median;
-
-            other = Student();
+            average = std::move(other.average);
+            median = std::move(other.median);
         }
         return *this;
     }
@@ -172,6 +170,12 @@ public:
     float countFinal(float grade, int &exam)
     {
         return grade * 0.4 + exam * 0.6;
+    }
+
+    ~Student()
+    {
+        name.clear();
+        surname.clear();
     }
 
     string getName() const
