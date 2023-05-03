@@ -225,8 +225,7 @@ void readFile(vector<Student> &students, string const &filename)
     string line;
     getline(in, line);
 
-    while (in >> students)
-        ;
+    while (in >> students);
 
     in.close();
 

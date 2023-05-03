@@ -1,11 +1,16 @@
 Naudojimo instrukcija: Atidaryti terminalą programos aplanke, įvesti "make", spaust enter ir sekti instrukcijas terminale. Norint patekti į greitavikos testavimo režimą, terminale įvesti "make test"
 
+# v1.5
+
+1.  Sukurta abstrakti base klasė Person (negalima kurti Person objektų, bet tik objektus iš jos išvestinių klasių)
+2.  Student klasė paversta kaip derived iš Person
+
 # v1.2
 
-Pertvarkytas kodas, kad būtų paprasčiau jį skaityti ir suprasti.
-Pridėti move ir copy construktoriai
-Pridėti move ir copy priskirimo operatoriai
-Pridėtas >> operatorius studento duomenų nuskaitymui
+1. Pertvarkytas kodas, kad būtų paprasčiau jį skaityti ir suprasti.
+2. Pridėti move ir copy construktoriai
+3. Pridėti move ir copy priskirimo operatoriai
+4. Pridėtas >> operatorius studento duomenų nuskaitymui
 
 # v1.1
 
@@ -16,10 +21,10 @@ Atlikti algoritmų patobulinimai beveik suvienodino programos darbo laiką su tu
 Testavimai atlikti naudojant nurodyto kiekio studentų failus, iš kurių kiekvienas turėjo po 15 pažymių (+ egzamino pažymys). Pgrindiniai testavimai atlikti naudojant -O3 optimizacija.
 Su 10M studentų RAM apkrova - 661,8MB (buvo 809MB)
 
-|         | **1k**       | **10k**     | **100k**   | **1M**    | **10M**   |
-| ------- | ------------ | ----------- | ---------- | --------- | --------- |
+|                | **1k**       | **10k**     | **100k**   | **1M**    | **10M**   |
+| -------------- | ------------ | ----------- | ---------- | --------- | --------- |
 | **sturktūros** | _0.00537378_ | _0.0539128_ | _0.535289_ | _5.31828_ | _52.0414_ |
-| **klasė** | _0.00555412_ | _0.0521482_ | _0.526918_ | _5.33006_ | _52.9485_ |
+| **klasė**      | _0.00555412_ | _0.0521482_ | _0.526918_ | _5.33006_ | _52.9485_ |
 
 Optimizavimo flag'ų testavimas (10M):
 
