@@ -1,5 +1,8 @@
 Naudojimo instrukcija: Atidaryti terminalą programos aplanke, įvesti "make", spaust enter ir sekti instrukcijas terminale. Norint patekti į greitavikos testavimo režimą, terminale įvesti "make test"
 
+# v2.0
+1. Pridėta doxygen dokumentacija
+
 # v1.5
 
 1.  Sukurta abstrakti base klasė Person (negalima kurti Person objektų, bet tik objektus iš jos išvestinių klasių)

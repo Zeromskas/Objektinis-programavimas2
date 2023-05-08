@@ -54,11 +54,11 @@ int main()
         break;
     case 2:
         total_start = std::chrono::high_resolution_clock::now();
-        generateFile();
+        generateFile(askRandomCount());
         break;
     case 3:
         total_start = std::chrono::high_resolution_clock::now();
-        generateRandom(students);
+        generateRandom(students, askRandomCount());
         break;
     }
 
@@ -68,7 +68,7 @@ int main()
     sort(students.begin(), students.end(), compareName);
     vector<Student> studPass = split(students);
 
-    printBoth(studPass, "studPass.txt", students, "studFail.txt");
+    printBoth(studPass, students);
 
     total_end = std::chrono::high_resolution_clock::now();
 
