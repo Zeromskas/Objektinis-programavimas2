@@ -1,24 +1,29 @@
 CPPFLAGS = -O3 -std=c++20
 
-main: cleanStud prog
+main: clean functions 
+	g++ $(CPPFLAGS) main.cpp functions.o -o prog
+	rm functions.o
+
+launch: cleanStud main
 	./prog
 	make clean
 
-prog: clean functions 
-	g++ $(CPPFLAGS) main.cpp functions.o -o prog
-
-test: cleanStud testCompile
-	./speedtest
+test: cleanStud speedTestCompile
+	./speedTest
 	make clean
 
-testCompile: clean functions
-	g++ $(CPPFLAGS) speed_testing.cpp functions.o -o speedtest
+speedTestCompile: clean functions
+	g++ $(CPPFLAGS) speedTesting.cpp functions.o -o speedTest
 
 functions:
 	g++ $(CPPFLAGS) -c functions.cpp
 
+unitTest: clean
+	g++ -std=c++20 functions.cpp unitTest.cpp -lgtest -lgtest_main -pthread -o unitTest
+	./unitTest
+
 clean:
-	rm -f *.o prog test test2
+	rm -f *.o prog speedTest unitTest
 	
 cleanStud:
 	rm -f studFail.txt studPass.txt

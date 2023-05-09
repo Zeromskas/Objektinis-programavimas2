@@ -1,7 +1,10 @@
 #include "functions.h"
 
+std::filesystem::path exe_dir = std::filesystem::path(std::filesystem::current_path()).parent_path();
+
 std::chrono::high_resolution_clock::time_point start_time, end_time;
 duration<double> dur;
+
 
 void consoleFill(vector<Student> &students)
 {
@@ -69,70 +72,11 @@ void dataFill(vector<Student> &students)
     cout << "Duomenys įrašyti" << endl;
 }
 
-void generateRandom(vector<Student> &students)
+vector<int> askRandomCount()
 {
+    vector<int> answer; // answer vector (0 - student count, 1 - grade count)
+    answer.reserve(2);
 
-    int studentCount = 0;
-    int gradeCount = 0;
-    while (true)
-    {
-        cout << "Kiek studentų norite generuoti?" << endl;
-        cin >> studentCount;
-        if (cin.fail() || studentCount <= 0)
-        {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Studentų kiekis turi būti sveikas skaičius, didesnis už 0." << endl;
-        }
-        else
-            break;
-    }
-
-    while (true)
-    {
-        cout << "Kiek pažymių norite generuoti kiekvienam studentui?" << endl;
-        cin >> gradeCount;
-        if (cin.fail() || gradeCount < 0)
-        {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Pažymių kiekis turi būti teigiamas sveikasis skaičius." << endl;
-        }
-        else
-            break;
-    }
-
-    start_time = high_resolution_clock::now();
-
-    random_device rd;
-    mt19937 mt(rd());
-    uniform_int_distribution<int> dist(0, 10);
-
-    cout << "Duomenys generuojami: ";
-    ;
-
-    students.reserve(studentCount);
-
-    vector<int> homeworkGrades;
-
-    homeworkGrades.reserve(gradeCount);
-
-    for (int i = 0; i < studentCount; ++i)
-    {
-        for (int j = 0; j < gradeCount; j++)
-            homeworkGrades.push_back(dist(mt));
-        students.emplace_back("Vardas" + to_string(i), "Pavardė" + to_string(i), homeworkGrades, dist(mt));
-    }
-
-    end_time = high_resolution_clock::now();
-    dur = end_time - start_time;
-    cout << dur.count() << " seconds";
-
-    cout << endl;
-}
-
-void generateFile()
-{
     int studentCount = 0;
 
     while (true)
@@ -148,6 +92,7 @@ void generateFile()
         else
             break;
     }
+    answer.push_back(studentCount);
 
     int gradeCount = 0;
     while (true)
@@ -163,12 +108,50 @@ void generateFile()
         else
             break;
     }
+    answer.push_back(studentCount);
 
-    string filename = "studentai" + to_string(studentCount) + ".txt";
+    return answer;
+}
+
+void generateRandom(vector<Student> &students, vector<int> count)
+{
+    start_time = high_resolution_clock::now();
+
+    random_device rd;
+    mt19937 mt(rd());
+    uniform_int_distribution<int> dist(0, 10);
+
+    cout << "Duomenys generuojami: ";
+
+    students.reserve(count[0]);
+
+    vector<int> homeworkGrades;
+
+    homeworkGrades.reserve(count[1]);
+
+    for (int i = 0; i < count[0]; ++i)
+    {
+        for (int j = 0; j < count[1]; j++)
+            homeworkGrades.push_back(dist(mt));
+        students.emplace_back("Vardas" + to_string(i), "Pavardė" + to_string(i), homeworkGrades, dist(mt));
+    }
+
+    end_time = high_resolution_clock::now();
+    dur = end_time - start_time;
+    cout << dur.count() << " seconds";
+
+    cout << endl;
+}
+
+void generateFile(vector<int> count)
+{
+
+
+    string filename = "studentai" + to_string(count[0]) + ".txt";
 
     start_time = high_resolution_clock::now();
 
-    ofstream out(filename);
+    ofstream out(exe_dir / filename);
 
     random_device rd;
     mt19937 mt(rd());
@@ -176,34 +159,34 @@ void generateFile()
 
     out << setw(15) << left << "Vardas" << setw(20) << left << "Pavardė";
 
-    for (int i = 1; i <= gradeCount; i++)
+    for (int i = 1; i <= count[1]; i++)
         out << "ND" << setw(3) << left << i;
 
     out << "Egzaminas" << endl;
 
     unique_ptr<ostringstream> oss(new ostringstream());
 
-    bool displayPercentage = studentCount > 100;
+    bool displayPercentage = count[0] > 100;
 
-    for (int i = 1; i <= studentCount; i++)
+    for (int i = 1; i <= count[0]; i++)
     {
         (*oss) << "Vardas" << setw(9) << left << i << "Pavardė" << setw(12) << left << i;
-        for (int j = 0; j < gradeCount; j++)
+        for (int j = 0; j < count[1]; j++)
             (*oss) << setw(5) << left << dist(mt);
 
         (*oss) << dist(mt) << endl;
-        if ((i + 1) % 10 == 0 || i == studentCount)
+        if ((i + 1) % 10 == 0 || i == count[0])
         {
             out << oss->str();
             oss->str("");
         }
         if (displayPercentage)
-            if (i % (studentCount / 100) == 0)
-                cout << 100 * i / studentCount << "%" << endl;
+            if (i % (count[0] / 100) == 0)
+                cout << 100 * i / count[0] << "%" << endl;
     }
     end_time = high_resolution_clock::now();
     dur = end_time - start_time;
-    cout << "Atsitiktinių pažymių failas 'studentai" << studentCount << ".txt' sugeneruotas" << endl;
+    cout << "Atsitiktinių pažymių failas 'studentai" << count[0] << ".txt' sugeneruotas ("<< exe_dir / filename <<")" << endl;
     cout << dur.count() << " seconds";
 
     cout << endl;
@@ -211,13 +194,15 @@ void generateFile()
 
 void readFile(vector<Student> &students, string const &filename)
 {
-    ifstream in(filename);
+
+
+    ifstream in(exe_dir / filename);
 
     if (!in.is_open())
     {
         throw runtime_error("Nepavyko atidaryti failo!");
     }
-    cout << filename << endl;
+    cout << exe_dir / filename << endl;
     cout << "Duomenys nuskaitomi: ";
 
     start_time = high_resolution_clock::now();
@@ -236,13 +221,13 @@ void readFile(vector<Student> &students, string const &filename)
     cout << endl;
 }
 
-void printBoth(vector<Student> &students1, string const &filename1, vector<Student> &students2, string const &filename2)
+void printBoth(vector<Student> &students1, vector<Student> &students2)
 {
     cout << "Duomenys išvedami: ";
     start_time = high_resolution_clock::now();
 
-    print(students1, filename1);
-    print(students2, filename2);
+    print(students1, "studPass.txt");
+    print(students2, "studFail.txt");
 
     end_time = high_resolution_clock::now();
     dur = end_time - start_time;

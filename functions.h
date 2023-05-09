@@ -11,6 +11,7 @@
 #include <chrono>
 #include <sstream>
 #include <iterator>
+#include <filesystem>
 
 using std::accumulate;
 using std::cerr;
@@ -66,11 +67,13 @@ protected:
         name = "";
         surname = "";
     }
-    virtual ~Person() {
+    virtual ~Person()
+    {
         name.clear();
         surname.clear();
     }
 
+    virtual string getName() const = 0;
 };
 
 class Student: public Person
@@ -85,6 +88,7 @@ public:
         median = countFinal(countMedian(homeworkGrades), examGrade);
         homeworkGrades.clear();
     }
+
     Student(string nam, string sur, float avg, float med) : Person(nam, sur), average(avg), median(med)
     {}
     Student(const Student &other) : Person(other.name, other.surname), average(other.average), median(other.median)
@@ -171,13 +175,14 @@ public:
         return grade * 0.4 + exam * 0.6;
     }
 
+
     ~Student()
     {
-        name.clear();
-        surname.clear();
+        average=0;
+        median=0;
     }
 
-    string getName() const
+    string getName() const override
     {
         return name;
     }
@@ -195,12 +200,48 @@ public:
     }
 };
 
-void generateRandom(vector<Student> &students);
+/// @brief Asks the user to input a number of students and a number of grades for each student, then puts them into a vector.
+/// @return vector of integers, first element is the number of students, second is the number of grades for each student
+vector<int> askRandomCount();
+
+/// @brief Generates a file with students' list and their grades, generated randomly
+/// @param count vector of integers, first element is the number of students, second is the number of grades for each student
+void generateFile(vector<int> count);
+
+/// @brief Asks the user how many students and how many grades for each to generate, then generates and puts them into a vector.
+/// @param students vector of students
+/// @param count vector of integers, first element is the number of students, second is the number of grades for each student
+void generateRandom(vector<Student> &students, vector<int> count);
+
+/// @brief Calls dataFill() function, after which it asks if there more students to be added. Function repeats until there are no more students to be added.
 void consoleFill(vector<Student> &students);
-void print(vector<Student> &students, string const &filename);
-void printBoth(vector<Student> &students1, string const &filename1, vector<Student> &students2, string const &filename2);
-void readFile(vector<Student> &students, string const &filename);
+
+/// @brief Asks the user to input student's name, surname and grades, then puts it into a vector.
+/// @param students vector of students
 void dataFill(vector<Student> &students);
+
+/// @brief Tries to open a given file, if successful, reads the data from it and puts it into a vector.
+/// @param students vector of students
+/// @param filename filename to read from
+void readFile(vector<Student> &students, string const &filename);
+
+/// @brief Takes two students and compares their surname, returns true if a's surname is smaller than b's, false otherwise. If surnames are equal, checks their names.
+/// @param a First student to compare
+/// @param b Second student to compare
+/// @return True if a's name is smaller than b's, false otherwise
 bool compareName(const Student &a, const Student &b);
+
+/// @brief Splits students into two vectors, one with passing grades, other with failing grades.
+/// @param students vector of students
+/// @return Vector of students with passing grades
 vector<Student> split(vector<Student> &students);
-void generateFile();
+
+/// @brief Takes two vectors and calls print() function for each of them
+/// @param students1 vector of students that have a passing grade
+/// @param students2 vector of students that have a failing grade
+void printBoth(vector<Student> &students1, vector<Student> &students2);
+
+/// @brief Takes a vector of students and prints it to a file, then clears the data from the vector
+/// @param students vector of students
+/// @param filename output filename
+void print(vector<Student> &students, string const &filename);

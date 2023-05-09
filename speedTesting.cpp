@@ -50,7 +50,7 @@ int main()
         dur = end_time - start_time;
         times[2].duration[i] = dur.count();
         start_time = high_resolution_clock::now();
-        printBoth(studPass, "studPass.txt", students, "studFail.txt");
+        printBoth(studPass, students);
         end_time = high_resolution_clock::now();
         dur = end_time - start_time;
         times[3].duration[i] = dur.count();

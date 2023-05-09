@@ -1,4 +1,12 @@
-Naudojimo instrukcija: Atidaryti terminalą programos aplanke, įvesti "make", spaust enter ir sekti instrukcijas terminale. Norint patekti į greitavikos testavimo režimą, terminale įvesti "make test"
+Naudojimo instrukcija: 
+1. Atsisiųsti ir pasileisti FinalGradeCalculator.dmg failą
+2. Spausti ant programos ikonos
+3. Vykdyti ekrane pasirodžiusias instrukcijas
+
+# v2.0
+1. Pridėta doxygen dokumentacija
+2. Atlikti Unit testavimai su Google Unit Test
+3. Pridėtas instaliacinis failas macOs operacinei sistemai (FinalGradeCalculator.dmg)
 
 # v1.5
 
