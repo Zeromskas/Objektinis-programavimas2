@@ -1,5 +1,7 @@
 #include "functions.h"
 
+std::filesystem::path exe_dir = std::filesystem::path(std::filesystem::current_path()).parent_path();
+
 std::chrono::high_resolution_clock::time_point start_time, end_time;
 duration<double> dur;
 
@@ -149,7 +151,7 @@ void generateFile(vector<int> count)
 
     start_time = high_resolution_clock::now();
 
-    ofstream out(filename);
+    ofstream out(exe_dir / filename);
 
     random_device rd;
     mt19937 mt(rd());
@@ -184,7 +186,7 @@ void generateFile(vector<int> count)
     }
     end_time = high_resolution_clock::now();
     dur = end_time - start_time;
-    cout << "Atsitiktinių pažymių failas 'studentai" << count[0] << ".txt' sugeneruotas" << endl;
+    cout << "Atsitiktinių pažymių failas 'studentai" << count[0] << ".txt' sugeneruotas ("<< exe_dir / filename <<")" << endl;
     cout << dur.count() << " seconds";
 
     cout << endl;
@@ -192,13 +194,15 @@ void generateFile(vector<int> count)
 
 void readFile(vector<Student> &students, string const &filename)
 {
-    ifstream in(filename);
+
+
+    ifstream in(exe_dir / filename);
 
     if (!in.is_open())
     {
         throw runtime_error("Nepavyko atidaryti failo!");
     }
-    cout << filename << endl;
+    cout << exe_dir / filename << endl;
     cout << "Duomenys nuskaitomi: ";
 
     start_time = high_resolution_clock::now();

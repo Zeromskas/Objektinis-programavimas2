@@ -2,6 +2,7 @@
 
 int main()
 {
+    cout<< std::filesystem::path(std::filesystem::current_path()).parent_path() <<endl;
     // time measuring
     std::chrono::high_resolution_clock::time_point total_start, total_end;
     duration<double> dur;

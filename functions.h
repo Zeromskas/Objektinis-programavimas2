@@ -11,6 +11,7 @@
 #include <chrono>
 #include <sstream>
 #include <iterator>
+#include <filesystem>
 
 using std::accumulate;
 using std::cerr;
