@@ -21,6 +21,7 @@ functions:
 unitTest: clean
 	g++ -std=c++20 functions.cpp unitTest.cpp -lgtest -lgtest_main -pthread -o unitTest
 	./unitTest
+	rm -f unitTest
 
 clean:
 	rm -f *.o prog speedTest unitTest

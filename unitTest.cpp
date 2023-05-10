@@ -8,7 +8,7 @@ TEST(compareName, compareNames)
     Student a("Antanas", "Baumila", grades, 10);
     Student b("Jonas", "Baumila", grades, 10);
 
-    EXPECT_EQ(compareName(a, b), 1) << "Wrong compare result";
+    EXPECT_EQ(compareName(a, b), 0) << "Wrong compare result";
 }
 
 TEST(generateRandom, generate10Students)

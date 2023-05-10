@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <limits>
 #include <fstream>
-#include <vector>
+#include "vector.h"
+//#include <vector>
 #include <random>
 #include <string>
 #include <chrono>
@@ -13,6 +14,7 @@
 #include <iterator>
 #include <filesystem>
 
+//using std::vector;
 using std::accumulate;
 using std::cerr;
 using std::cin;
@@ -45,7 +47,7 @@ using std::swap;
 using std::to_string;
 using std::uniform_int_distribution;
 using std::unique_ptr;
-using std::vector;
+
 using std::chrono::duration;
 using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;

@@ -1,10 +1,7 @@
 #include "functions.h"
 
-std::filesystem::path exe_dir = std::filesystem::path(std::filesystem::current_path()).parent_path();
-
 std::chrono::high_resolution_clock::time_point start_time, end_time;
 duration<double> dur;
-
 
 void consoleFill(vector<Student> &students)
 {
@@ -129,16 +126,21 @@ void generateRandom(vector<Student> &students, vector<int> count)
 
     homeworkGrades.reserve(count[1]);
 
+    bool displayPercentage = count[0] > 100;
+
     for (int i = 0; i < count[0]; ++i)
     {
         for (int j = 0; j < count[1]; j++)
             homeworkGrades.push_back(dist(mt));
         students.emplace_back("Vardas" + to_string(i), "Pavardė" + to_string(i), homeworkGrades, dist(mt));
+        if (displayPercentage)
+            if (i % (count[0] / 100) == 0)
+                cout << 100 * i / count[0] << "%" << endl;
     }
 
     end_time = high_resolution_clock::now();
     dur = end_time - start_time;
-    cout << dur.count() << " seconds";
+    cout << "Generavimas užtruko: " << dur.count() << " seconds";
 
     cout << endl;
 }
@@ -146,12 +148,11 @@ void generateRandom(vector<Student> &students, vector<int> count)
 void generateFile(vector<int> count)
 {
 
-
     string filename = "studentai" + to_string(count[0]) + ".txt";
 
     start_time = high_resolution_clock::now();
 
-    ofstream out(exe_dir / filename);
+    ofstream out(filename);
 
     random_device rd;
     mt19937 mt(rd());
@@ -186,7 +187,7 @@ void generateFile(vector<int> count)
     }
     end_time = high_resolution_clock::now();
     dur = end_time - start_time;
-    cout << "Atsitiktinių pažymių failas 'studentai" << count[0] << ".txt' sugeneruotas ("<< exe_dir / filename <<")" << endl;
+    cout << "Atsitiktinių pažymių failas 'studentai" << count[0] << ".txt' sugeneruotas (" << filename << ")" << endl;
     cout << dur.count() << " seconds";
 
     cout << endl;
@@ -195,14 +196,13 @@ void generateFile(vector<int> count)
 void readFile(vector<Student> &students, string const &filename)
 {
 
-
-    ifstream in(exe_dir / filename);
+    ifstream in(filename);
 
     if (!in.is_open())
     {
         throw runtime_error("Nepavyko atidaryti failo!");
     }
-    cout << exe_dir / filename << endl;
+    cout << filename << endl;
     cout << "Duomenys nuskaitomi: ";
 
     start_time = high_resolution_clock::now();
@@ -210,7 +210,8 @@ void readFile(vector<Student> &students, string const &filename)
     string line;
     getline(in, line);
 
-    while (in >> students);
+    while (in >> students)
+        ;
 
     in.close();
 
